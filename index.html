@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIRCOLA WATCHES — Admin Control Panel</title>
+  <meta name="description" content="CIRCOLA Luxury Virtual Horology — Master Administrator Web Panel & Financial Ledger">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            gold: '#D4AF69',
+            'gold-hover': '#e0bc77',
+            bgMain: '#0B0B0D',
+            bgSurface: '#19191D',
+            bgSecondary: '#222228',
+            bgElevated: '#131316',
+          },
+          fontFamily: {
+            serif: ['Cinzel', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"Space Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background-color: #0B0B0D;
+      color: #F5F0E6;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .font-serif { font-family: 'Cinzel', Georgia, serif; }
+    .font-mono { font-family: 'Space Mono', monospace; }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0B0B0D; }
+    ::-webkit-scrollbar-thumb { background: #222228; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4AF69; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+    body.light-theme { background:#f4f1e9 !important; color:#24211b !important; color-scheme:light; }
+    body.light-theme [class*="bg-[#0B0B0D]"], body.light-theme [class*="bg-[#131316]"], body.light-theme [class*="bg-[#19191D]"], body.light-theme [class*="bg-[#222228]"] { background-color:#fff !important; }
+    body.light-theme [class*="text-[#F5F0E6]"], body.light-theme [class*="text-stone-100"], body.light-theme [class*="text-stone-200"], body.light-theme [class*="text-stone-300"] { color:#29251e !important; }
+    body.light-theme [class*="text-stone-400"], body.light-theme [class*="text-stone-500"], body.light-theme [class*="text-[#AAA6A0]"] { color:#716b60 !important; }
+    body.light-theme [class*="border-[#222228]"] { border-color:#ded8ca !important; }
+    body.light-theme input, body.light-theme select, body.light-theme textarea { background:#fff !important; color:#29251e !important; border-color:#ded8ca !important; }
+    body.light-theme table { color:#29251e; }
+    body.light-theme #errorReportModal pre { background:#f4f1e9 !important; color:#29251e !important; }
+    body.light-theme #errorReportModal > div { background:#fff !important; border-color:#ded8ca !important; }
+    body.light-theme #toastContainer > div { background:#fff !important; color:#29251e !important; }
+  </style>
+<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+<body class="bg-[#0B0B0D] text-[#F5F0E6] flex flex-col min-h-screen select-text">
+
+  <!-- ================= TOP HEADER BAR ================= -->
+  <header class="h-16 border-b border-[#222228] bg-[#131316] px-4 sm:px-6 flex items-center justify-between shrink-0 sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-[#D4AF69]/20 border border-[#D4AF69]/40 flex items-center justify-center text-[#D4AF69] shadow-sm">
+        <i data-lucide="shield" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-serif text-base sm:text-lg font-bold tracking-wider text-[#F5F0E6]">
+            CIRCOLA WATCHES
+          </span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#D4AF69] text-[#0B0B0D] uppercase tracking-wider">
+            Admin Control Panel
+          </span>
+        </div>
+        <span class="text-[11px] font-mono text-[#AAA6A0] hidden sm:block">
+          Auth ID: <strong class="text-[#D4AF69]">6ae43bc2000846aa6b86adminId</strong> · Project: 6ae3b79d0029a009cbb0
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button id="themeToggleBtn" onclick="toggleTheme()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#19191D] hover:bg-[#222228] text-stone-300 border border-[#222228] transition-colors" title="Switch color theme">
+        <i id="themeToggleIcon" data-lucide="sun" class="w-3.5 h-3.5"></i><span id="themeToggleLabel">Light mode</span>
+      </button>
+      <button
+        onclick="downloadSelfHtml()"
+        class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#D4AF69] hover:bg-[#e0bc77] text-[#0B0B0D] shadow-lg shadow-[#D4AF69]/20 transition-all cursor-pointer"
+        title="Download this exact standalone HTML file"
+      >
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <span>Download HTML File</span>
+      </button>
+
+      <button
+        onclick="exportLedgerCSV()"
+        class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#19191D] hover:bg-[#222228] text-stone-300 border border-[#222228] transition-colors"
+      >
+        <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#D4AF69]"></i>
+        <span>Export CSV</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= HORIZONTAL NAVIGATION SUB-BAR ================= -->
+  <nav class="border-b border-[#222228] bg-[#19191D] px-4 sm:px-6 flex items-center gap-2 overflow-x-auto text-xs font-semibold shrink-0 scrollbar-none sticky top-16 z-30">
+    <button
+      id="tabBtn-dashboard"
+      onclick="switchTab('dashboard')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-[#D4AF69] text-[#D4AF69]"
+    >
+      <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+      <span>Dashboard</span>
+    </button>
+
+    <button
+      id="tabBtn-deposits"
+      onclick="switchTab('deposits')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-transparent text-stone-400 hover:text-stone-200"
+    >
+      <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5"></i>
+      <span>Deposits</span>
+      <span id="pendingDepositsBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">0</span>
+    </button>
+
+    <button
+      id="tabBtn-withdrawals"
+      onclick="switchTab('withdrawals')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-transparent text-stone-400 hover:text-stone-200"
+    >
+      <i data-lucide="arrow-up-from-line" class="w-3.5 h-3.5"></i>
+      <span>Withdrawals</span>
+      <span id="pendingWithdrawalsBadge" class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">0</span>
+    </button>
+
+    <button
+      id="tabBtn-customers"
+      onclick="switchTab('customers')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-transparent text-stone-400 hover:text-stone-200"
+    >
+      <i data-lucide="users" class="w-3.5 h-3.5"></i>
+      <span>Customer Management (<span id="totalCustomersNavCount">0</span>)</span>
+    </button>
+
+    <button
+      id="tabBtn-financial"
+      onclick="switchTab('financial')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-transparent text-stone-400 hover:text-stone-200"
+    >
+      <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+      <span>Master Ledger</span>
+    </button>
+
+    <button
+      id="tabBtn-settings"
+      onclick="switchTab('settings')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-transparent text-stone-400 hover:text-stone-200"
+    >
+      <i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
+      <span>Recipients & Community</span>
+    </button>
+
+    <button
+      id="tabBtn-audit"
+      onclick="switchTab('audit')"
+      class="nav-tab py-3 px-3.5 border-b-2 flex items-center gap-2 transition-colors whitespace-nowrap border-transparent text-stone-400 hover:text-stone-200"
+    >
+      <i data-lucide="radio" class="w-3.5 h-3.5"></i>
+      <span>Audit Logs (<span id="auditCountNav">0</span>)</span>
+    </button>
+  </nav>
+
+
+  <!-- ================= ADMIN AUTH / ERROR OVERLAY ================= -->
+  <div id="adminLoginOverlay" class="fixed inset-0 z-[100] bg-[#0B0B0D] flex items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-3xl bg-[#19191D] border border-[#D4AF69]/30 p-7 shadow-2xl">
+      <div class="text-center mb-6">
+        <div class="mx-auto w-12 h-12 rounded-2xl bg-[#D4AF69]/15 border border-[#D4AF69]/40 flex items-center justify-center text-[#D4AF69]">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <h2 class="font-serif text-xl font-bold mt-4">CIRCOLA Admin Access</h2>
+        <p class="text-xs text-stone-400 mt-1">Administrator session required.</p>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs text-stone-400 mb-1">Administrator Phone</label>
+          <input id="adminLoginPhone" type="tel" inputmode="numeric" autocomplete="username"
+            placeholder="0747474747"
+            class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-3 text-sm text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69]">
+        </div>
+        <div>
+          <label class="block text-xs text-stone-400 mb-1">Password</label>
+          <input id="adminLoginPassword" type="password" autocomplete="current-password"
+            placeholder="Password"
+            class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-3 text-sm text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69]">
+        </div>
+        <button id="adminLoginBtn" onclick="adminLogin()"
+          class="w-full py-3 rounded-xl text-sm font-bold bg-[#D4AF69] hover:bg-[#e0bc77] text-[#0B0B0D]">
+          Sign In
+        </button>
+        <div id="adminLoginStatus" class="text-center text-xs text-stone-400 min-h-5"></div>
+      </div>
+      <div class="mt-5 pt-4 border-t border-[#222228] text-[10px] text-stone-500 text-center">
+        Authorized administrator session is verified directly against Appwrite.
+      </div>
+    </div>
+  </div>
+  <button id="errorReportButton" onclick="openErrorReport()"
+    class="fixed bottom-5 left-5 z-[90] px-3 py-2 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-[11px] font-bold shadow-xl">
+    ⚠ Errors <span id="errorCountBadge" class="ml-1">0</span>
+  </button>
+  <div id="errorReportModal" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-3xl max-h-[88vh] rounded-3xl bg-[#19191D] border border-[#222228] p-5 shadow-2xl flex flex-col">
+      <div class="flex items-center justify-between border-b border-[#222228] pb-3">
+        <div><h3 class="font-serif text-lg font-bold text-rose-300">CIRCOLA ADMIN TECHNICAL ERROR REPORT</h3><p id="errorReportMeta" class="text-[10px] text-stone-500 mt-1"></p></div>
+        <button onclick="closeErrorReport()" class="text-stone-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <pre id="errorReportText" class="flex-1 overflow-auto whitespace-pre-wrap text-[10px] font-mono text-stone-300 bg-[#0B0B0D] rounded-xl p-4 mt-4"></pre>
+      <div class="flex justify-end gap-2 mt-4">
+        <button onclick="copyErrorReport()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#D4AF69] text-[#0B0B0D]">Copy Report</button>
+        <button onclick="clearErrors()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#222228] text-stone-300">Clear</button>
+        <button onclick="closeErrorReport()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#222228] text-stone-300">Close</button>
+      </div>
+    </div>
+  </div>
+  <!-- ================= MAIN CONTENT PANE ================= -->
+  <main class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+
+    <!-- ================= TAB 1: DASHBOARD ================= -->
+    <section id="pane-dashboard" class="tab-pane space-y-6 max-w-7xl mx-auto">
+      <!-- Settlements & Liquidity Summary -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-serif text-sm font-bold text-[#D4AF69] uppercase tracking-wider">
+            Settlements & Liquidity Summary
+          </h3>
+          <span class="text-xs text-stone-400">Live platform totals</span>
+        </div>
+        <div id="dashboardSummaryContainer"></div>
+      </div>
+
+      <!-- Quick KPI Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-4 rounded-2xl bg-[#19191D] border border-[#222228]">
+          <span class="text-xs text-stone-400 block">Total Customers</span>
+          <span id="kpiTotalCustomers" class="text-2xl font-bold font-mono text-[#F5F0E6] block mt-1">0</span>
+          <span id="kpiActiveProfiles" class="text-[11px] text-emerald-400 mt-1 block font-mono">0 Active Profiles</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-[#19191D] border border-[#222228]">
+          <span class="text-xs text-stone-400 block">Pending Deposits</span>
+          <span id="kpiPendingDeposits" class="text-2xl font-bold font-mono text-amber-400 block mt-1">0</span>
+          <span class="text-[11px] text-stone-400 mt-1 block">Awaiting verification</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-[#19191D] border border-[#222228]">
+          <span class="text-xs text-stone-400 block">Pending Cashouts</span>
+          <span id="kpiPendingCashouts" class="text-2xl font-bold font-mono text-rose-400 block mt-1">0</span>
+          <span class="text-[11px] text-stone-400 mt-1 block">Awaiting payout</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-[#19191D] border border-[#222228]">
+          <span class="text-xs text-stone-400 block">Active Watch Contracts</span>
+          <span id="kpiActiveContracts" class="text-2xl font-bold font-mono text-[#D4AF69] block mt-1">0</span>
+          <span id="kpiContractLiability" class="text-[11px] text-stone-400 mt-1 block font-mono">Liability: UGX 0</span>
+        </div>
+      </div>
+
+      <!-- Action Queues Previews -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Pending Deposits Preview -->
+        <div class="p-5 rounded-2xl bg-[#19191D] border border-[#222228]">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <i data-lucide="arrow-down-to-line" class="w-4 h-4 text-[#D4AF69]"></i>
+              <h3 class="font-serif text-sm font-bold text-[#F5F0E6]">Pending Deposits Queue</h3>
+            </div>
+            <button onclick="switchTab('deposits')" class="text-xs text-[#D4AF69] hover:underline flex items-center gap-1">
+              <span>View all (<span id="dashPendingDepCount">0</span>)</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <div id="dashPendingDepositsList" class="space-y-3"></div>
+        </div>
+
+        <!-- Pending Withdrawals Preview -->
+        <div class="p-5 rounded-2xl bg-[#19191D] border border-[#222228]">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <i data-lucide="arrow-up-from-line" class="w-4 h-4 text-amber-400"></i>
+              <h3 class="font-serif text-sm font-bold text-[#F5F0E6]">Pending Cashouts Queue</h3>
+            </div>
+            <button onclick="switchTab('withdrawals')" class="text-xs text-[#D4AF69] hover:underline flex items-center gap-1">
+              <span>View all (<span id="dashPendingWdCount">0</span>)</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <div id="dashPendingWithdrawalsList" class="space-y-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: DEPOSITS ================= -->
+    <section id="pane-deposits" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+      <div id="depositsSummaryContainer"></div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-serif text-xl font-bold text-[#F5F0E6]">Deposit Cards</h2>
+          <p class="text-xs text-stone-400">
+            Verify recharge payments. Only approved deposits credit the customer recharge wallet.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+            <input
+              type="text"
+              id="depositSearchInput"
+              placeholder="Search user, phone, TID..."
+              oninput="renderDepositsView()"
+              class="bg-[#19191D] border border-[#222228] text-xs rounded-xl pl-8 pr-3 py-2 text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69] w-48 sm:w-60"
+            />
+          </div>
+
+          <div class="flex bg-[#19191D] p-1 rounded-xl border border-[#222228] text-xs">
+            <button onclick="setDepositFilter('all')" id="depFilter-all" class="px-3 py-1 rounded-lg font-semibold bg-[#222228] text-[#D4AF69]">All</button>
+            <button onclick="setDepositFilter('Pending')" id="depFilter-Pending" class="px-3 py-1 rounded-lg font-semibold text-stone-400 hover:text-white">Pending</button>
+            <button onclick="setDepositFilter('Approved')" id="depFilter-Approved" class="px-3 py-1 rounded-lg font-semibold text-stone-400 hover:text-white">Approved</button>
+            <button onclick="setDepositFilter('Rejected')" id="depFilter-Rejected" class="px-3 py-1 rounded-lg font-semibold text-stone-400 hover:text-white">Rejected</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="depositsCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ================= TAB 3: WITHDRAWALS ================= -->
+    <section id="pane-withdrawals" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+      <div id="withdrawalsSummaryContainer"></div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-serif text-xl font-bold text-[#F5F0E6]">Withdrawal Cards</h2>
+          <p class="text-xs text-stone-400">
+            Manage payouts. 5% Tax calculator with net payout. Rejection refunds funds to Withdrawable Balance.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+            <input
+              type="text"
+              id="withdrawalSearchInput"
+              placeholder="Search username, phone, name..."
+              oninput="renderWithdrawalsView()"
+              class="bg-[#19191D] border border-[#222228] text-xs rounded-xl pl-8 pr-3 py-2 text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69] w-48 sm:w-60"
+            />
+          </div>
+
+          <div class="flex bg-[#19191D] p-1 rounded-xl border border-[#222228] text-xs">
+            <button onclick="setWithdrawalFilter('all')" id="wdFilter-all" class="px-3 py-1 rounded-lg font-semibold bg-[#222228] text-[#D4AF69]">All</button>
+            <button onclick="setWithdrawalFilter('Pending')" id="wdFilter-Pending" class="px-3 py-1 rounded-lg font-semibold text-stone-400 hover:text-white">Pending</button>
+            <button onclick="setWithdrawalFilter('Paid')" id="wdFilter-Paid" class="px-3 py-1 rounded-lg font-semibold text-stone-400 hover:text-white">Approved</button>
+            <button onclick="setWithdrawalFilter('Rejected')" id="wdFilter-Rejected" class="px-3 py-1 rounded-lg font-semibold text-stone-400 hover:text-white">Rejected</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="withdrawalsCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ================= TAB 4: CUSTOMER MANAGEMENT ================= -->
+    <section id="pane-customers" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="font-serif text-xl font-bold text-[#F5F0E6]">Customer Accounts</h2>
+          <p class="text-xs text-stone-400">
+            Search, block/unblock, pin VIPs, and adjust Recharge, Withdrawable, and Locked balances.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <div class="relative flex-1 sm:w-72">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+            <input
+              type="text"
+              id="customerSearchInput"
+              placeholder="Search username or phone..."
+              oninput="renderCustomersView()"
+              class="w-full bg-[#19191D] border border-[#222228] text-xs rounded-xl pl-9 pr-3 py-2 text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69]"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-semibold scrollbar-none">
+        <button onclick="setUserFilter('all')" id="userFilter-all" class="px-3.5 py-1.5 rounded-xl border transition-all bg-[#D4AF69] text-[#0B0B0D] border-[#D4AF69]">All Users</button>
+        <button onclick="setUserFilter('active')" id="userFilter-active" class="px-3.5 py-1.5 rounded-xl border transition-all bg-[#19191D] text-stone-400 border-[#222228] hover:text-white">Active Only</button>
+        <button onclick="setUserFilter('blocked')" id="userFilter-blocked" class="px-3.5 py-1.5 rounded-xl border transition-all bg-[#19191D] text-stone-400 border-[#222228] hover:text-white">Blocked</button>
+        <button onclick="setUserFilter('online')" id="userFilter-online" class="px-3.5 py-1.5 rounded-xl border transition-all bg-[#19191D] text-stone-400 border-[#222228] hover:text-white">Online</button>
+        <button onclick="setUserFilter('pinned')" id="userFilter-pinned" class="px-3.5 py-1.5 rounded-xl border transition-all bg-[#19191D] text-stone-400 border-[#222228] hover:text-white">📌 Pinned</button>
+      </div>
+
+      <!-- Customers Cards Grid -->
+      <div id="customersCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ================= TAB 5: MASTER LEDGER ================= -->
+    <section id="pane-financial" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="font-serif text-xl font-bold text-[#F5F0E6]">Master Financial Ledger</h2>
+          <p class="text-xs text-stone-400">
+            Differentiates all 8 financial transaction types with real-time auditability.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <select
+            id="ledgerTypeFilter"
+            onchange="renderLedgerView()"
+            class="bg-[#19191D] border border-[#222228] text-xs rounded-xl px-3 py-2 text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69]"
+          >
+            <option value="all">All 8 Types</option>
+            <option value="RECHARGE">RECHARGE (Deposit)</option>
+            <option value="WITHDRAWAL">WITHDRAWAL (Payout)</option>
+            <option value="PURCHASE">PURCHASE (Watch Contract)</option>
+            <option value="DAILY_CREDIT">DAILY_CREDIT (Vault)</option>
+            <option value="MATURITY_RELEASE">MATURITY_RELEASE (25-Day Release)</option>
+            <option value="REFERRAL_COMMISSION">REFERRAL_COMMISSION (20%)</option>
+            <option value="ADMIN_ADJUSTMENT">ADMIN_ADJUSTMENT (Audit)</option>
+            <option value="REFUND">REFUND (Failed Withdrawal)</option>
+          </select>
+
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+            <input
+              type="text"
+              id="ledgerSearchInput"
+              placeholder="Search reference, customer..."
+              oninput="renderLedgerView()"
+              class="bg-[#19191D] border border-[#222228] text-xs rounded-xl pl-8 pr-3 py-2 text-[#F5F0E6] focus:outline-none focus:border-[#D4AF69] w-48 sm:w-60"
+            />
+          </div>
+
+          <button
+            onclick="exportLedgerCSV()"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#222228] hover:bg-[#2c2c36] text-[#D4AF69] border border-[#D4AF69]/30"
+          >
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="rounded-2xl bg-[#19191D] border border-[#222228] overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#131316] text-stone-400 border-b border-[#222228] uppercase text-[10px] tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Date / Time</th>
+                <th class="py-3 px-4">Type</th>
+                <th class="py-3 px-4">Reference / TID</th>
+                <th class="py-3 px-4">Customer</th>
+                <th class="py-3 px-4">Phone</th>
+                <th class="py-3 px-4 text-right">Amount (UGX)</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Description</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody" class="divide-y divide-[#222228] font-mono text-[11px]"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 6: SETTINGS & RECIPIENTS ================= -->
+    <section id="pane-settings" class="tab-pane hidden space-y-6 max-w-4xl mx-auto">
+      <div>
+        <h2 class="font-serif text-xl font-bold text-[#F5F0E6]">Payment Recipients & Community</h2>
+        <p class="text-xs text-stone-400">
+          Official telco accounts shown to customers during deposit, and official WhatsApp link.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- MTN Mobile Money -->
+        <div class="p-5 rounded-2xl bg-[#19191D] border border-[#222228] space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-[#F5F0E6]">MTN Mobile Money Merchant</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400">ACTIVE</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-stone-400 mb-1">Account / Merchant Name</label>
+              <input id="setMtnName" type="text" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-[#F5F0E6] focus:border-[#D4AF69]" />
+            </div>
+            <div>
+              <label class="block text-stone-400 mb-1">Phone Number / Merchant Code</label>
+              <input id="setMtnNumber" type="text" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-[#F5F0E6] focus:border-[#D4AF69]" />
+            </div>
+            <div>
+              <label class="block text-stone-400 mb-1">Payment Instructions</label>
+              <textarea id="setMtnInst" rows="2" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-[#F5F0E6] focus:border-[#D4AF69]"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Airtel Money -->
+        <div class="p-5 rounded-2xl bg-[#19191D] border border-[#222228] space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-sm text-[#F5F0E6]">Airtel Money Merchant</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400">ACTIVE</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-stone-400 mb-1">Account / Merchant Name</label>
+              <input id="setAirtelName" type="text" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-[#F5F0E6] focus:border-[#D4AF69]" />
+            </div>
+            <div>
+              <label class="block text-stone-400 mb-1">Phone Number / Merchant Code</label>
+              <input id="setAirtelNumber" type="text" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-[#F5F0E6] focus:border-[#D4AF69]" />
+            </div>
+            <div>
+              <label class="block text-stone-400 mb-1">Payment Instructions</label>
+              <textarea id="setAirtelInst" rows="2" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-[#F5F0E6] focus:border-[#D4AF69]"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Community URL -->
+      <div class="p-5 rounded-2xl bg-[#19191D] border border-[#222228] space-y-4">
+        <h3 class="font-bold text-sm text-[#F5F0E6]">Official Community WhatsApp Group</h3>
+        <div>
+          <label class="block text-xs text-stone-400 mb-1">WhatsApp Group Invite URL</label>
+          <input id="setGroupUrl" type="url" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-xs text-[#F5F0E6] focus:border-[#D4AF69]" />
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          onclick="savePlatformSettings()"
+          class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#D4AF69] hover:bg-[#e0bc77] text-[#0B0B0D] shadow-lg transition-all"
+        >
+          Save Platform Settings
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= TAB 7: AUDIT LOGS ================= -->
+    <section id="pane-audit" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+      <div>
+        <h2 class="font-serif text-xl font-bold text-[#F5F0E6]">System Audit Trail</h2>
+        <p class="text-xs text-stone-400">
+          Permanent chronological log of administrator actions, balance modifications, and transaction resolutions.
+        </p>
+      </div>
+
+      <div class="rounded-2xl bg-[#19191D] border border-[#222228] overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#131316] text-stone-400 border-b border-[#222228] uppercase text-[10px] tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Timestamp</th>
+                <th class="py-3 px-4">Action</th>
+                <th class="py-3 px-4">Target / User</th>
+                <th class="py-3 px-4">Admin ID</th>
+                <th class="py-3 px-4">Details / Notes</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody" class="divide-y divide-[#222228] font-mono text-[11px]"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. Customer Details & Balance Editor Modal -->
+  <div id="customerModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-lg rounded-3xl bg-[#19191D] border border-[#222228] p-6 space-y-5 text-left shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-[#222228] pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#D4AF69]/20 border border-[#D4AF69]/40 flex items-center justify-center text-[#D4AF69]">
+            <i data-lucide="users" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 id="modalCustName" class="font-serif text-base font-bold text-[#F5F0E6]">Customer Name</h3>
+            <span id="modalCustPhone" class="text-xs text-stone-400 font-mono">0772000000</span>
+          </div>
+        </div>
+        <button onclick="closeCustomerModal()" class="text-stone-400 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs bg-[#131316] p-3 rounded-2xl border border-[#222228]">
+        <div>
+          <span class="text-stone-400 block text-[10px]">User ID</span>
+          <span id="modalCustUserId" class="font-mono text-[11px] text-[#F5F0E6] truncate block">usr_xxx</span>
+        </div>
+        <div>
+          <span class="text-stone-400 block text-[10px]">Referral Code</span>
+          <span id="modalCustRefCode" class="font-mono text-[11px] text-[#D4AF69] block">CIR-XXX</span>
+        </div>
+        <div>
+          <span class="text-stone-400 block text-[10px]">Account Status</span>
+          <span id="modalCustStatusBadge" class="inline-block mt-0.5"></span>
+        </div>
+        <div>
+          <span class="text-stone-400 block text-[10px]">Total Referrals</span>
+          <span id="modalCustTotalRefs" class="font-mono text-[11px] text-stone-300">0</span>
+        </div>
+      </div>
+
+      <!-- Quick Toggles -->
+      <div class="flex items-center gap-2">
+        <button id="modalBtnToggleBlock" onclick="toggleUserBlockFromModal()" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-colors"></button>
+        <button id="modalBtnTogglePin" onclick="toggleUserPinFromModal()" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-[#222228] text-stone-300 hover:text-white border border-[#222228]"></button>
+      </div>
+
+      <!-- Balance Editor Form -->
+      <div class="p-4 rounded-2xl bg-[#131316] border border-[#D4AF69]/30 space-y-3">
+        <div class="flex items-center gap-1.5 text-xs font-bold text-[#D4AF69]">
+          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+          <span>Edit Both Wallet & Balances</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <label class="block text-stone-400 mb-0.5 text-[11px]">Recharge Wallet (UGX) <span class="text-stone-500">— Used for watch purchases</span></label>
+            <input id="modalEditRecharge" type="number" min="0" class="w-full bg-[#19191D] border border-[#222228] rounded-xl px-3 py-1.5 font-mono text-emerald-400 focus:border-[#D4AF69]" />
+          </div>
+
+          <div>
+            <label class="block text-stone-400 mb-0.5 text-[11px]">Withdrawable Balance (UGX) <span class="text-stone-500">— Commissions & matured releases</span></label>
+            <input id="modalEditWithdrawable" type="number" min="0" class="w-full bg-[#19191D] border border-[#222228] rounded-xl px-3 py-1.5 font-mono text-[#D4AF69] focus:border-[#D4AF69]" />
+          </div>
+
+          <div>
+            <label class="block text-stone-400 mb-0.5 text-[11px]">Locked Product Balance (UGX) <span class="text-stone-500">— Daily credits vault</span></label>
+            <input id="modalEditLocked" type="number" min="0" class="w-full bg-[#19191D] border border-[#222228] rounded-xl px-3 py-1.5 font-mono text-cyan-400 focus:border-[#D4AF69]" />
+          </div>
+
+          <div>
+            <label class="block text-stone-400 mb-0.5 text-[11px]">Audit Reason / Note <span class="text-rose-400">*</span></label>
+            <input id="modalEditReason" type="text" placeholder="e.g. Compensation for telco delay..." class="w-full bg-[#19191D] border border-[#222228] rounded-xl px-3 py-1.5 text-stone-200 focus:border-[#D4AF69]" />
+          </div>
+        </div>
+
+        <button
+          onclick="saveModalBalanceAdjustments()"
+          class="w-full py-2.5 rounded-xl text-xs font-bold bg-[#D4AF69] hover:bg-[#e0bc77] text-[#0B0B0D] shadow-md transition-all mt-2"
+        >
+          Save Balances & Log Audit Entry
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Deposit Rejection Modal -->
+  <div id="depRejectModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md rounded-3xl bg-[#19191D] border border-[#222228] p-6 space-y-4 text-left shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#222228] pb-3">
+        <h3 class="font-serif text-base font-bold text-rose-400">Reject Deposit Request</h3>
+        <button onclick="closeDepRejectModal()" class="text-stone-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-stone-300">
+        You are rejecting deposit <strong id="depRejectRef" class="font-mono text-[#D4AF69]"></strong> for <strong id="depRejectAmount" class="font-mono text-[#F5F0E6]"></strong>.
+      </p>
+      <div>
+        <label class="block text-xs text-stone-400 mb-1">Reason for Rejection</label>
+        <input id="depRejectReasonInput" type="text" placeholder="e.g. Invalid TID / SMS not matched" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-xs text-[#F5F0E6] focus:border-[#D4AF69]" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeDepRejectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#222228] text-stone-300">Cancel</button>
+        <button onclick="confirmDepositRejection()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white">Confirm Rejection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Withdrawal Payout Modal -->
+  <div id="wdPayModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md rounded-3xl bg-[#19191D] border border-[#222228] p-6 space-y-4 text-left shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#222228] pb-3">
+        <h3 class="font-serif text-base font-bold text-amber-400">Approve & Disburse Payout</h3>
+        <button onclick="closeWdPayModal()" class="text-stone-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-2 text-xs bg-[#131316] p-3.5 rounded-2xl border border-[#222228]">
+        <div class="flex justify-between"><span class="text-stone-400">Recipient Account Name:</span><span id="wdPayRecipientName" class="font-bold text-[#F5F0E6]"></span></div>
+        <div class="flex justify-between"><span class="text-stone-400">Payout Phone Number:</span><span id="wdPayRecipientPhone" class="font-mono text-[#F5F0E6]"></span></div>
+        <div class="flex justify-between"><span class="text-stone-400">Gross Amount Requested:</span><span id="wdPayGross" class="font-mono text-stone-300"></span></div>
+        <div class="flex justify-between"><span class="text-stone-400">5% Tax Retained:</span><span id="wdPayTax" class="font-mono text-rose-400"></span></div>
+        <div class="border-t border-[#222228] pt-2 flex justify-between items-baseline"><span class="text-xs font-bold text-[#D4AF69]">Net Amount Due to Send:</span><span id="wdPayNet" class="font-mono font-bold text-sm text-amber-400"></span></div>
+      </div>
+      <div>
+        <label class="block text-xs text-stone-400 mb-1">Mobile Money Telco Transaction ID (TID) / Voucher</label>
+        <input id="wdPayTidInput" type="text" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-xs text-[#F5F0E6] font-mono focus:border-[#D4AF69]" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeWdPayModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#222228] text-stone-300">Cancel</button>
+        <button onclick="confirmWithdrawalPayout()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#D4AF69] hover:bg-[#e0bc77] text-[#0B0B0D]">Confirm Disbursed & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Withdrawal Rejection Modal -->
+  <div id="wdRejectModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md rounded-3xl bg-[#19191D] border border-[#222228] p-6 space-y-4 text-left shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#222228] pb-3">
+        <h3 class="font-serif text-base font-bold text-rose-400">Reject Withdrawal & Refund Funds</h3>
+        <button onclick="closeWdRejectModal()" class="text-stone-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-stone-300 leading-relaxed">
+        Rejecting this cashout will automatically restore the gross reserved amount back to the user's <strong class="text-emerald-400">Withdrawable Balance</strong> and log a <strong class="text-[#D4AF69]">REFUND</strong> ledger entry.
+      </p>
+      <div>
+        <label class="block text-xs text-stone-400 mb-1">Reason for Rejection (Visible to User)</label>
+        <input id="wdRejectReasonInput" type="text" placeholder="e.g. Phone number name does not match KYC registration" class="w-full bg-[#131316] border border-[#222228] rounded-xl px-3 py-2 text-xs text-[#F5F0E6] focus:border-[#D4AF69]" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeWdRejectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[#222228] text-stone-300">Cancel</button>
+        <button onclick="confirmWithdrawalRejection()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white">Refund & Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ================= MASTER JAVASCRIPT STATE & LOGIC ================= -->
+  <script>
+  const ENDPOINT='https://fra.cloud.appwrite.io/v1';
+  const PROJECT='6ae3b79d0029a009cbb0';
+  const DB='6ae410d6003158bfd1d3';
+  const ADMIN_AUTH_ID='c579c5e8-33c6-4d53-a3b2-9a2cb1549960';
+  const ADMIN_PROFILE_ID='04dc77c0-d7b8-4f9a-946d-a552bbe28eee';
+
+  const T={
+    profiles:'6ae432ef001aa9ba8b97', withdraws:'6ae424900033d73d974a',
+    wallets:'6ae42d4c001a0d317423', purchases:'6ae429c40014a00f63f2',
+    recipients:'6ae42ea60007da17435a', notifications:'6ae47d4200043e7fcdb5',
+    maturity:'6ae428410031b067eddd', ledger:'6ae422070034f1e2fd1e',
+    deposits:'6ae42b9d00005f5f72a9', commissions:'6ae4236b001f77756403',
+    settings:'6ae430e600127da147c5', audit:'6ae42114000a6f3d61ce'
+  };
+
+  let state={
+    profiles:[],wallets:[],deposits:[],withdraws:[],purchases:[],recipients:[],
+    notifications:[],maturity:[],ledger:[],commissions:[],settings:[],audit:[],
+    admin:null,loaded:false
+  };
+  let errors=[], currentDepositFilter='all', currentWithdrawalFilter='all', currentUserFilter='all';
+  let activeModalUserId=null, activeDepRejectId=null, activeWdPayId=null, activeWdRejectId=null;
+
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const money=v=>Number(v||0).toLocaleString('en-UG');
+  const now=()=>new Date().toISOString();
+  const rowData=r=>r?.data && typeof r.data==='object' ? {...r.data,$id:r.$id,$createdAt:r.$createdAt,$updatedAt:r.$updatedAt,$permissions:r.$permissions}:r;
+  function val(r,k,d=''){const x=rowData(r); return x?.[k] ?? d;}
+  function recordError(where,err){
+    const e=err||{};
+    const item={time:now(),where,http:e.status||e.code||'',message:e.message||String(e),data:e.data||e.body||''};
+    errors.unshift(item); if(errors.length>100)errors.length=100;
+    const b=document.getElementById('errorCountBadge'); if(b)b.textContent=errors.length;
+    console.error('[CIRCOLA]',where,e);
+  }
+  async function api(path,opt={},where=path){
+    try{
+      const o={method:'GET',headers:{'Content-Type':'application/json','X-Appwrite-Project':PROJECT,...(opt.headers||{})},credentials:'include',...opt};
+      if(o.body && typeof o.body!=='string')o.body=JSON.stringify(o.body);
+      const res=await fetch(ENDPOINT+path,o);
+      const raw=await res.text(); let data={}; try{data=raw?JSON.parse(raw):{};}catch{data=raw;}
+      if(!res.ok){const er=new Error(data?.message||`HTTP ${res.status}`); er.status=res.status;er.data=data;throw er;}
+      return data;
+    }catch(e){recordError(where,e);throw e;}
+  }
+  async function listRows(tableId){
+    if(!tableId)throw new Error('Missing Appwrite table ID');
+    let out=[],offset=0;
+    while(true){
+      const d=await api(`/tablesdb/${DB}/tables/${tableId}/rows?limit=100&offset=${offset}`);
+      const rows=(d.rows||[]).map(rowData); out.push(...rows);
+      if(rows.length<100)break; offset+=rows.length;
+      if(offset>10000)break;
+    }
+    return out;
+  }
+  async function createRow(tableId,data,rowId){
+    return api(`/tablesdb/${DB}/tables/${tableId}/rows`,{method:'POST',body:{rowId:rowId||crypto.randomUUID(),data}},`CREATE ${tableId}`);
+  }
+  async function updateRow(tableId,rowId,data){
+    return api(`/tablesdb/${DB}/tables/${tableId}/rows/${encodeURIComponent(rowId)}`,{method:'PATCH',body:{data}},`UPDATE ${tableId}/${rowId}`);
+  }
+  async function deleteRow(tableId,rowId){
+    return api(`/tablesdb/${DB}/tables/${tableId}/rows/${encodeURIComponent(rowId)}`,{method:'DELETE'},`DELETE ${tableId}/${rowId}`);
+  }
+  function normalizePhone(p){
+    let x=String(p||'').trim().replace(/[\s()-]/g,'');
+    if(/^07\d{8}$/.test(x))return x;
+    if(/^7\d{8}$/.test(x))return '0'+x;
+    if(/^2567\d{8}$/.test(x))return '0'+x.slice(3);
+    if(/^\+2567\d{8}$/.test(x))return '0'+x.slice(4);
+    return x;
+  }
+  function authEmail(phone){return normalizePhone(phone).replace(/^0/,'256')+'@circolawatches.com';}
+
+  async function requireAdmin(){
+    const account=await api('/account',{},'Admin session verification');
+    if(account?.$id!==ADMIN_AUTH_ID){
+      const e=new Error(`Unauthorized administrator. Expected ${ADMIN_AUTH_ID}, received ${account?.$id||'none'}`);e.status=403;e.data=account;throw e;
+    }
+    state.admin=account; return account;
+  }
+  async function adminLogin(){
+    const phone=document.getElementById('adminLoginPhone').value.trim();
+    const password=document.getElementById('adminLoginPassword').value;
+    const status=document.getElementById('adminLoginStatus'),btn=document.getElementById('adminLoginBtn');
+    if(!phone||!password){status.textContent='Enter administrator phone and password.';return;}
+    btn.disabled=true;status.textContent='Signing in…';
+    try{
+      await api('/account/sessions/email',{method:'POST',body:{email:authEmail(phone),password}},'Admin login');
+      await requireAdmin();
+      document.getElementById('adminLoginOverlay').classList.add('hidden');
+      status.textContent=''; await syncAll(); switchTab('dashboard');
+      showToast('Administrator session verified.');
+    }catch(e){
+      status.textContent='Unable to sign in. Check your details and try again.';
+    }finally{btn.disabled=false;}
+  }
+  async function adminLogout(){
+    try{await api('/account/sessions/current',{method:'DELETE'},'Admin logout');}catch(e){}
+    document.getElementById('adminLoginOverlay').classList.remove('hidden');
+  }
+
+  async function syncAll(){
+    if(!state.admin)return;
+    const results=await Promise.allSettled(Object.entries(T).map(async([key,id])=>[key,await listRows(id)]));
+    for(const r of results)if(r.status==='fulfilled')state[r.value[0]]=r.value[1];else{}
+    state.loaded=true; renderAll();
+    // Technical read failures are recorded in the private error report; never shown as user-facing alerts.
+  }
+  function findById(arr,id){return arr.find(x=>x.$id===id);}
+  function getUser(id){return state.profiles.find(p=>p.authUserId===id||p.$id===id)||{username:'Customer',phone:'',authUserId:id};}
+  function getWallet(id){return state.wallets.find(w=>w.userId===id);}
+  function getSetting(key){return state.settings.find(s=>s.settingKey===key);}
+  function statusText(v){return String(v||'').replace(/_/g,' ');}
+  function userOnline(p){const t=Date.parse(p.lastSeenAt||'');return Number.isFinite(t)&&(Date.now()-t)<300000;}
+
+  function showToast(msg){
+    const c=document.getElementById('toastContainer');if(!c)return;
+    const d=document.createElement('div');d.className='px-4 py-2.5 rounded-xl bg-[#19191D] border border-[#D4AF69]/50 text-[#F5F0E6] text-xs font-medium shadow-2xl flex items-center gap-2';
+    d.innerHTML=`<span class="w-2 h-2 rounded-full bg-[#D4AF69]"></span><span>${esc(msg)}</span>`;c.appendChild(d);
+    setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},3000);
+  }
+  function applyTheme(theme){
+    const light=theme==='light';
+    document.body.classList.toggle('light-theme',light);
+    const label=document.getElementById('themeToggleLabel');
+    const icon=document.getElementById('themeToggleIcon');
+    if(label)label.textContent=light?'Dark mode':'Light mode';
+    if(icon){icon.setAttribute('data-lucide',light?'moon':'sun');if(window.lucide)lucide.createIcons();}
+    try{localStorage.setItem('circola-admin-theme',light?'light':'dark')}catch(e){}
+  }
+  function toggleTheme(){applyTheme(document.body.classList.contains('light-theme')?'dark':'light')}
+  try{if(localStorage.getItem('circola-admin-theme')==='light')document.body.classList.add('light-theme')}catch(e){}
+
+  function switchTab(tabId){
+    document.querySelectorAll('.tab-pane').forEach(e=>e.classList.add('hidden'));
+    document.querySelectorAll('.nav-tab').forEach(e=>{e.classList.remove('border-[#D4AF69]','text-[#D4AF69]');e.classList.add('border-transparent','text-stone-400')});
+    const pane=document.getElementById('pane-'+tabId),btn=document.getElementById('tabBtn-'+tabId);
+    if(pane)pane.classList.remove('hidden');if(btn){btn.classList.add('border-[#D4AF69]','text-[#D4AF69]');btn.classList.remove('border-transparent','text-stone-400')}
+    ({dashboard:renderDashboardView,deposits:renderDepositsView,withdrawals:renderWithdrawalsView,customers:renderCustomersView,financial:renderLedgerView,settings:renderSettingsView,audit:renderAuditView}[tabId]||(()=>{}))();
+    if(window.lucide)lucide.createIcons();
+  }
+
+  function summaryHTML(){
+    const approved=state.deposits.filter(x=>String(x.status).toLowerCase()==='approved');
+    const paid=state.withdraws.filter(x=>['paid','approved'].includes(String(x.status).toLowerCase()));
+    const gross=paid.reduce((a,x)=>a+Number(x.amount||0),0);
+    const tax=paid.reduce((a,x)=>a+Number(x.taxAmount||0),0);
+    const net=paid.reduce((a,x)=>a+Number(x.netAmount||Number(x.amount||0)-Number(x.taxAmount||0)),0);
+    const inflow=approved.reduce((a,x)=>a+Number(x.amount||0),0);
+    const flow=inflow-net;
+    return `<div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-2xl bg-[#131316] border border-[#D4AF69]/30 shadow-lg">
+      <div class="p-3 rounded-xl bg-[#19191D] border border-[#222228]"><span class="text-[10px] uppercase font-bold text-emerald-400">Approved Deposits</span><div class="text-lg font-bold font-mono text-emerald-400">UGX ${money(inflow)}</div><span class="text-[11px] text-stone-400">${approved.length} approved</span></div>
+      <div class="p-3 rounded-xl bg-[#19191D] border border-[#222228]"><span class="text-[10px] uppercase font-bold text-amber-400">Approved Withdrawals</span><div class="text-lg font-bold font-mono text-amber-400">UGX ${money(net)}</div><span class="text-[11px] text-stone-400">Gross ${money(gross)} · Tax ${money(tax)}</span></div>
+      <div class="p-3 rounded-xl bg-[#19191D] border border-[#222228]"><span class="text-[10px] uppercase font-bold text-[#D4AF69]">Net Platform Cash Flow</span><div class="text-lg font-bold font-mono ${flow>=0?'text-emerald-400':'text-rose-400'}">${flow>=0?'+':''}UGX ${money(flow)}</div><span class="text-[11px] text-stone-400">Based on live records</span></div>
+    </div>`;
+  }
+
+  function renderDashboardView(){
+    document.getElementById('dashboardSummaryContainer').innerHTML=summaryHTML();
+    const active=state.profiles.filter(p=>String(p.accountStatus).toLowerCase()==='active');
+    const pd=state.deposits.filter(x=>['pending','under review'].includes(String(x.status).toLowerCase()));
+    const pw=state.withdraws.filter(x=>['pending','under review'].includes(String(x.status).toLowerCase()));
+    const purchases=state.purchases.filter(x=>!['matured','completed','cancelled'].includes(String(x.status).toLowerCase()));
+    const liability=purchases.reduce((a,x)=>a+Number(x.expectedReturnAmount||0),0);
+    kpiTotalCustomers.textContent=state.profiles.length;kpiActiveProfiles.textContent=`${active.length} Active Profiles`;
+    kpiPendingDeposits.textContent=pd.length;kpiPendingCashouts.textContent=pw.length;kpiActiveContracts.textContent=purchases.length;kpiContractLiability.textContent=`Liability: UGX ${money(liability)}`;
+    pendingDepositsBadge.textContent=pd.length;pendingWithdrawalsBadge.textContent=pw.length;totalCustomersNavCount.textContent=state.profiles.length;auditCountNav.textContent=state.audit.length;
+    dashPendingDepCount.textContent=pd.length;dashPendingWdCount.textContent=pw.length;
+    dashPendingDepositsList.innerHTML=pd.slice(0,3).map(x=>{const u=getUser(x.userId);return `<div class="p-3.5 rounded-xl bg-[#131316] border border-[#222228] flex items-center justify-between"><div><div class="font-bold text-xs">${esc(u.username)}</div><div class="text-[11px] text-stone-400 font-mono">${esc(x.network)}: ${esc(x.payerPhone||u.phone)}</div><div class="text-xs font-mono font-bold text-emerald-400 mt-0.5">UGX ${money(x.amount)} · TID: ${esc(x.transactionId)}</div></div><div class="flex gap-2"><button onclick="approveDeposit('${esc(x.$id)}')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-400">Approve</button><button onclick="openDepRejectModal('${esc(x.$id)}')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-rose-500/20 text-rose-400">Reject</button></div></div>`}).join('')||'<div class="py-8 text-center text-xs text-stone-400">All recharge requests verified.</div>';
+    dashPendingWithdrawalsList.innerHTML=pw.slice(0,3).map(x=>{const u=getUser(x.userId);const gross=Number(x.amount||0),tax=Number(x.taxAmount||0),net=Number(x.netAmount||gross-tax);return `<div class="p-3.5 rounded-xl bg-[#131316] border border-[#222228] flex items-center justify-between"><div><div class="font-bold text-xs">${esc(u.username)} <span class="text-[10px] text-stone-400">(${esc(x.payoutName)})</span></div><div class="text-[11px] text-stone-400 font-mono">${esc(x.network)}: ${esc(x.payoutphone)}</div><div class="text-xs font-mono font-bold text-amber-400 mt-0.5">Gross UGX ${money(gross)} → Net UGX ${money(net)}</div></div><div class="flex gap-2"><button onclick="openWdPayModal('${esc(x.$id)}')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-[#D4AF69]/20 text-[#D4AF69]">Approve</button><button onclick="openWdRejectModal('${esc(x.$id)}')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-rose-500/20 text-rose-400">Reject</button></div></div>`}).join('')||'<div class="py-8 text-center text-xs text-stone-400">No cashouts currently awaiting payout.</div>';
+  }
+
+  function setDepositFilter(f){currentDepositFilter=f;renderDepositsView()}
+  function renderDepositsView(){
+    depositsSummaryContainer.innerHTML=summaryHTML();const q=(depositSearchInput.value||'').toLowerCase();
+    const rows=state.deposits.filter(x=>{const s=String(x.status||'').toLowerCase();if(currentDepositFilter!=='all'&&s!==currentDepositFilter.toLowerCase()&&(currentDepositFilter==='Pending'&&!['pending','under review'].includes(s)))return false;const u=getUser(x.userId);return !q||`${u.username} ${u.phone} ${x.transactionId}`.toLowerCase().includes(q)});
+    depositsCardsGrid.innerHTML=rows.map(x=>{const u=getUser(x.userId),s=String(x.status).toLowerCase(),pending=['pending','under review'].includes(s);return `<div class="p-5 rounded-2xl bg-[#19191D] border ${pending?'border-amber-500/40':s==='approved'?'border-emerald-500/30':'border-rose-500/30'} flex flex-col justify-between gap-4"><div><div class="flex justify-between mb-3"><div><h4 class="font-bold text-sm">${esc(u.username)}</h4><span class="text-xs text-stone-400 font-mono">${esc(x.payerPhone||u.phone)}</span></div><span class="px-2 py-0.5 rounded text-[10px] font-bold">${esc(statusText(x.status))}</span></div><div class="space-y-2 text-xs bg-[#131316] p-3 rounded-xl"><div class="flex justify-between"><span class="text-stone-400">Carrier</span><b>${esc(x.network)}</b></div><div class="flex justify-between"><span class="text-stone-400">Transaction ID</span><b class="font-mono text-[#D4AF69]">${esc(x.transactionId)}</b></div><div class="flex justify-between border-t border-[#222228] pt-2"><span class="text-stone-400">Amount</span><b class="font-mono text-emerald-400">UGX ${money(x.amount)}</b></div></div></div>${pending?`<div class="flex gap-2"><button onclick="approveDeposit('${esc(x.$id)}')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white">Approve Deposit</button><button onclick="openDepRejectModal('${esc(x.$id)}')" class="py-2 px-3 rounded-xl text-xs font-bold bg-rose-500/20 text-rose-400">Reject</button></div>`:`<div class="text-center text-xs text-stone-500">${s==='approved'?'✓ Credited to Customer Recharge Wallet':'✕ Deposit Request Rejected'}</div>`}</div>`}).join('')||'<div class="col-span-full p-8 rounded-2xl bg-[#19191D] text-center text-stone-400">No deposit records match.</div>';
+  }
+
+  async function approveDeposit(id){
+    const x=findById(state.deposits,id);if(!x||!['pending','under review'].includes(String(x.status).toLowerCase()))return;
+    try{
+      const w=getWallet(x.userId)||await createWallet(x.userId);
+      const before=Number(w.rechargeBalance||0),after=before+Number(x.amount||0);
+      await updateRow(T.wallets,w.$id,{rechargeBalance:after,totalRecharged:Number(w.totalRecharged||0)+Number(x.amount||0)});
+      await updateRow(T.deposits,x.$id,{status:'Approved',reviewedAt:now(),reviewedBy:ADMIN_AUTH_ID});
+      await createRow(T.ledger,{userId:x.userId,bucket:'rechargeBalance',entryType:'RECHARGE',direction:'CREDIT',amount:Number(x.amount||0),balanceBefore:before,balanceAfter:after,referenceType:'deposit',referenceId:x.$id,idempotencykey:`ADMIN-DEP-${x.$id}`,status:'posted',note:`Deposit approved: ${x.transactionId}`});
+      await notify(x.userId,'Deposit approved',`Your deposit of UGX ${money(x.amount)} has been approved.`,Number(x.amount||0),'deposit',x.$id);
+      await audit('DEPOSIT_APPROVED',T.deposits,x.$id,{},x,'Approved deposit '+x.transactionId);
+      showToast('Deposit approved and wallet credited.');await syncAll();switchTab('deposits');
+    }catch(e){/* technical details remain in the Errors report */}
+  }
+
+  function openDepRejectModal(id){activeDepRejectId=id;const x=findById(state.deposits,id);if(!x)return;depRejectRef.textContent=x.transactionId;depRejectAmount.textContent=`UGX ${money(x.amount)}`;depRejectReasonInput.value='';depRejectModal.classList.remove('hidden')}
+  function closeDepRejectModal(){depRejectModal.classList.add('hidden');activeDepRejectId=null}
+  async function confirmDepositRejection(){
+    const x=findById(state.deposits,activeDepRejectId);if(!x)return;const reason=depRejectReasonInput.value.trim()||'Payment details could not be matched';
+    try{await updateRow(T.deposits,x.$id,{status:'Rejected',reviewedAt:now(),reviewedBy:ADMIN_AUTH_ID,rejectionReason:reason});await notify(x.userId,'Deposit rejected',reason,Number(x.amount||0),'deposit',x.$id);await audit('DEPOSIT_REJECTED',T.deposits,x.$id,{},x,reason);closeDepRejectModal();showToast('Deposit rejected.');await syncAll();switchTab('deposits')}catch(e){/* technical details remain in the Errors report */}
+  }
+
+  function setWithdrawalFilter(f){currentWithdrawalFilter=f;renderWithdrawalsView()}
+  function renderWithdrawalsView(){
+    withdrawalsSummaryContainer.innerHTML=summaryHTML();const q=(withdrawalSearchInput.value||'').toLowerCase();
+    const rows=state.withdraws.filter(x=>{const s=String(x.status||'').toLowerCase();if(currentWithdrawalFilter!=='all'){if(currentWithdrawalFilter==='Pending'&&!['pending','under review'].includes(s))return false;if(currentWithdrawalFilter==='Paid'&&!['paid','approved'].includes(s))return false;if(currentWithdrawalFilter==='Rejected'&&s!=='rejected')return false}const u=getUser(x.userId);return !q||`${u.username} ${u.phone} ${x.payoutName} ${x.payoutphone} ${x.requestRef}`.toLowerCase().includes(q)});
+    withdrawalsCardsGrid.innerHTML=rows.map(x=>{const u=getUser(x.userId),gross=Number(x.amount||0),tax=Number(x.taxAmount||0),net=Number(x.netAmount||gross-tax),s=String(x.status).toLowerCase(),pending=['pending','under review'].includes(s);return `<div class="p-5 rounded-2xl bg-[#19191D] border ${pending?'border-amber-500/40':s==='paid'?'border-emerald-500/30':'border-rose-500/30'} flex flex-col justify-between gap-4"><div><div class="flex justify-between mb-3"><div><h4 class="font-bold text-sm">${esc(u.username)}</h4><span class="text-xs text-stone-400 font-mono">${esc(x.network)}: ${esc(x.payoutphone)}</span></div><span class="px-2 py-0.5 rounded text-[10px] font-bold">${esc(statusText(x.status))}</span></div><div class="space-y-1.5 text-xs bg-[#131316] p-3.5 rounded-xl"><div class="flex justify-between"><span class="text-stone-400">Recipient</span><b>${esc(x.payoutName)}</b></div><div class="flex justify-between"><span class="text-stone-400">Gross</span><span>UGX ${money(gross)}</span></div><div class="flex justify-between"><span class="text-stone-400">Tax</span><span class="text-rose-400">-UGX ${money(tax)}</span></div><div class="flex justify-between border-t border-[#222228] pt-2"><b class="text-[#D4AF69]">Net Payout</b><b class="text-amber-400 font-mono">UGX ${money(net)}</b></div></div></div>${pending?`<div class="flex gap-2"><button onclick="openWdPayModal('${esc(x.$id)}')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-[#D4AF69] text-[#0B0B0D]">Approve & Pay</button><button onclick="openWdRejectModal('${esc(x.$id)}')" class="py-2 px-3 rounded-xl text-xs font-bold bg-rose-500/20 text-rose-400">Reject & Refund</button></div>`:`<div class="text-center text-xs text-stone-500">${s==='paid'?'✓ Disbursed':'✕ Rejected'}</div>`}</div>`}).join('')||'<div class="col-span-full p-8 rounded-2xl bg-[#19191D] text-center text-stone-400">No withdrawal records match.</div>';
+  }
+
+  function openWdPayModal(id){activeWdPayId=id;const x=findById(state.withdraws,id);if(!x)return;const gross=Number(x.amount||0),tax=Number(x.taxAmount||0),net=Number(x.netAmount||gross-tax);wdPayRecipientName.textContent=x.payoutName;wdPayRecipientPhone.textContent=x.payoutphone;wdPayGross.textContent=`UGX ${money(gross)}`;wdPayTax.textContent=`-UGX ${money(tax)}`;wdPayNet.textContent=`UGX ${money(net)}`;wdPayTidInput.value='';wdPayModal.classList.remove('hidden')}
+  function closeWdPayModal(){wdPayModal.classList.add('hidden');activeWdPayId=null}
+  async function confirmWithdrawalPayout(){
+    const x=findById(state.withdraws,activeWdPayId);if(!x)return;const tid=wdPayTidInput.value.trim();if(!tid){showToast('Enter the actual telco transaction ID.');return}
+    try{await updateRow(T.withdraws,x.$id,{status:'Paid',providerRef:tid,reviewedAt:now(),reviewedBy:ADMIN_AUTH_ID,paidAt:now()});
+      const w=getWallet(x.userId);if(w)await updateRow(T.wallets,w.$id,{totalWithdrawn:Number(w.totalWithdrawn||0)+Number(x.amount||0)});
+      await createRow(T.ledger,{userId:x.userId,bucket:'withdrawableBalance',entryType:'WITHDRAWAL',direction:'DEBIT',amount:Number(x.amount||0),balanceBefore:Number(w?.withdrawableBalance||0),balanceAfter:Number(w?.withdrawableBalance||0),referenceType:'withdraw',referenceId:x.$id,idempotencykey:`ADMIN-WD-${x.$id}`,status:'posted',note:`Withdrawal paid: ${tid}`});
+      await notify(x.userId,'Withdrawal paid',`Your withdrawal of UGX ${money(x.netAmount||x.amount)} has been paid.`,Number(x.netAmount||x.amount),'withdrawal',x.$id);
+      await audit('WITHDRAWAL_PAID',T.withdraws,x.$id,{},x,`Paid via ${tid}`);
+      closeWdPayModal();showToast('Withdrawal marked paid.');await syncAll();switchTab('withdrawals');
+    }catch(e){/* technical details remain in the Errors report */}
+  }
+  function openWdRejectModal(id){activeWdRejectId=id;wdRejectReasonInput.value='';wdRejectModal.classList.remove('hidden')}
+  function closeWdRejectModal(){wdRejectModal.classList.add('hidden');activeWdRejectId=null}
+  async function confirmWithdrawalRejection(){
+    const x=findById(state.withdraws,activeWdRejectId);if(!x)return;const reason=wdRejectReasonInput.value.trim()||'Account validation failed';
+    try{
+      const w=getWallet(x.userId);if(w){const before=Number(w.withdrawableBalance||0),after=before+Number(x.amount||0);await updateRow(T.wallets,w.$id,{withdrawableBalance:after});await createRow(T.ledger,{userId:x.userId,bucket:'withdrawableBalance',entryType:'REFUND',direction:'CREDIT',amount:Number(x.amount||0),balanceBefore:before,balanceAfter:after,referenceType:'withdraw',referenceId:x.$id,idempotencykey:`ADMIN-REFUND-${x.$id}`,status:'posted',note:reason});}
+      await updateRow(T.withdraws,x.$id,{status:'Rejected',reviewedAt:now(),reviewedBy:ADMIN_AUTH_ID,rejectionReason:reason});
+      await notify(x.userId,'Withdrawal rejected',reason,Number(x.amount||0),'withdrawal',x.$id);await audit('WITHDRAWAL_REJECTED',T.withdraws,x.$id,{},x,reason);
+      closeWdRejectModal();showToast('Withdrawal rejected and refunded.');await syncAll();switchTab('withdrawals');
+    }catch(e){/* technical details remain in the Errors report */}
+  }
+
+  function setUserFilter(f){currentUserFilter=f;renderCustomersView()}
+  function renderCustomersView(){
+    const q=(customerSearchInput.value||'').toLowerCase();
+    const rows=state.profiles.filter(p=>{const st=String(p.accountStatus).toLowerCase();if(currentUserFilter==='active'&&st!=='active')return false;if(currentUserFilter==='blocked'&&st!=='blocked')return false;if(currentUserFilter==='online'&&!userOnline(p))return false;return !q||`${p.username} ${p.phone}`.toLowerCase().includes(q)});
+    customersCardsGrid.innerHTML=rows.map(p=>{const w=getWallet(p.authUserId)||{},refs=state.profiles.filter(x=>x.referredByUserId===p.authUserId).length;return `<div onclick="openCustomerModal('${esc(p.authUserId)}')" class="p-5 rounded-2xl bg-[#19191D] border border-[#222228] hover:border-[#D4AF69]/50 cursor-pointer flex flex-col justify-between gap-4"><div><div class="flex items-start justify-between mb-2"><div><h4 class="font-bold text-sm">${esc(p.username)}</h4><span class="text-xs text-stone-400 font-mono">${esc(p.phone)}</span></div><span class="px-2 py-0.5 rounded text-[10px] font-bold">${esc(p.accountStatus)}</span></div><div class="space-y-1.5 text-xs bg-[#131316] p-3 rounded-xl"><div class="flex justify-between"><span class="text-stone-400">Withdrawable</span><b class="text-[#D4AF69] font-mono">UGX ${money(w.withdrawableBalance)}</b></div><div class="flex justify-between"><span class="text-stone-400">Recharge</span><b class="text-emerald-400 font-mono">UGX ${money(w.rechargeBalance)}</b></div><div class="flex justify-between"><span class="text-stone-400">Locked Vault</span><b class="text-cyan-400 font-mono">Not stored</b></div></div></div><div class="text-xs text-stone-400 border-t border-[#222228] pt-2">Referrals: <strong>${refs}</strong> · ${userOnline(p)?'Online':'Last seen '+esc(p.lastSeenAt||'—')}</div></div>`}).join('')||'<div class="col-span-full p-8 rounded-2xl bg-[#19191D] text-center text-stone-400">No customers match.</div>';
+  }
+  function openCustomerModal(id){
+    activeModalUserId=id;const p=state.profiles.find(x=>x.authUserId===id);if(!p)return;const w=getWallet(id)||{};
+    modalCustName.textContent=p.username;modalCustPhone.textContent=p.phone;modalCustUserId.textContent=p.authUserId;modalCustRefCode.textContent=p.referralCode||'—';modalCustTotalRefs.textContent=state.profiles.filter(x=>x.referredByUserId===id).length+' members';modalCustStatusBadge.textContent=p.accountStatus;
+    modalBtnToggleBlock.textContent=String(p.accountStatus).toLowerCase()==='blocked'?'Unblock Account':'Block Account';
+    modalBtnTogglePin.disabled=true;modalBtnTogglePin.textContent='Pinning unavailable in exact schema';modalBtnTogglePin.classList.add('opacity-50','cursor-not-allowed');
+    modalEditRecharge.value=Number(w.rechargeBalance||0);modalEditWithdrawable.value=Number(w.withdrawableBalance||0);modalEditLocked.value='';modalEditLocked.disabled=true;modalEditLocked.placeholder='Not supported by exact wallet schema';modalEditReason.value='';customerModal.classList.remove('hidden');
+  }
+  function closeCustomerModal(){customerModal.classList.add('hidden');activeModalUserId=null}
+  async function toggleUserBlockFromModal(){
+    const p=state.profiles.find(x=>x.authUserId===activeModalUserId);if(!p)return;const before={accountStatus:p.accountStatus};const next=String(p.accountStatus).toLowerCase()==='blocked'?'active':'blocked';
+    try{await updateRow(T.profiles,p.$id,{accountStatus:next});await notify(p.authUserId,next==='blocked'?'Account blocked':'Account restored',next==='blocked'?'Your account has been blocked by administration.':'Your account has been restored.',0,'account',p.$id);await audit('USER_STATUS_CHANGE',T.profiles,p.$id,before,{...before,accountStatus:next},`Changed status to ${next}`);showToast(`User is now ${next}.`);await syncAll();openCustomerModal(p.authUserId)}catch(e){/* technical details remain in the Errors report */}
+  }
+  async function toggleUserPinFromModal(){return;}
+  async function saveModalBalanceAdjustments(){
+    const p=state.profiles.find(x=>x.authUserId===activeModalUserId),w=getWallet(activeModalUserId);if(!p||!w)return;
+    const rec=Number(modalEditRecharge.value),withdr=Number(modalEditWithdrawable.value),reason=modalEditReason.value.trim();
+    if(!Number.isFinite(rec)||!Number.isFinite(withdr)||rec<0||withdr<0||!reason){showToast('Enter valid balances and an audit reason.');return}
+    try{
+      const before={rechargeBalance:Number(w.rechargeBalance||0),withdrawableBalance:Number(w.withdrawableBalance||0)};
+      await updateRow(T.wallets,w.$id,{rechargeBalance:rec,withdrawableBalance:withdr});
+      await createRow(T.ledger,{userId:p.authUserId,bucket:'adminAdjustment',entryType:'ADMIN_ADJUSTMENT',direction:'CREDIT',amount:Math.abs(withdr-before.withdrawableBalance),balanceBefore:before.withdrawableBalance,balanceAfter:withdr,referenceType:'admin',referenceId:p.authUserId,idempotencykey:`ADMIN-ADJ-${p.authUserId}-${Date.now()}`,status:'posted',note:reason});
+      await audit('ADMIN_WALLET_EDIT',T.wallets,w.$id,before,{rechargeBalance:rec,withdrawableBalance:withdr},reason);showToast('Wallet balances updated and audited.');await syncAll();closeCustomerModal();
+    }catch(e){/* technical details remain in the Errors report */}
+  }
+
+  function renderLedgerView(){
+    const q=(ledgerSearchInput.value||'').toLowerCase(),type=ledgerTypeFilter.value;
+    const rows=state.ledger.filter(x=>(type==='all'||String(x.entryType)===type)&&(!q||JSON.stringify(x).toLowerCase().includes(q))).sort((a,b)=>String(b.$createdAt||'').localeCompare(String(a.$createdAt||'')));
+    ledgerTableBody.innerHTML=rows.map(x=>{const u=getUser(x.userId);return `<tr><td class="py-3 px-4">${esc(x.$createdAt||'')}</td><td class="py-3 px-4">${esc(x.entryType)}</td><td class="py-3 px-4 font-mono">${esc(x.referenceId)}</td><td class="py-3 px-4">${esc(u.username)}</td><td class="py-3 px-4">${esc(u.phone)}</td><td class="py-3 px-4 text-right">${money(x.amount)}</td><td class="py-3 px-4">${esc(x.status)}</td><td class="py-3 px-4">${esc(x.note)}</td></tr>`}).join('')||'<tr><td colspan="8" class="p-8 text-center text-stone-400">No ledger entries.</td></tr>';
+  }
+  function exportLedgerCSV(){
+    const rows=state.ledger.map(x=>{const u=getUser(x.userId);return [x.$createdAt,x.entryType,x.referenceId,u.username,u.phone,x.amount,x.status,x.note]});
+    const csv=[['Date','Type','Reference','Customer','Phone','Amount','Status','Description'],...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='circola-master-ledger.csv';a.click();
+  }
+
+  function renderSettingsView(){
+    const m=state.recipients.find(x=>String(x.network).toLowerCase()==='mtn'),a=state.recipients.find(x=>String(x.network).toLowerCase()==='airtel'),s=getSetting('platform')||state.settings[0];
+    setMtnName.value=m?.recipientName||'';setMtnNumber.value=m?.phoneNumber||'';setMtnInst.value='Stored fields: recipientName + phoneNumber (instructions are not in exact schema).';setMtnInst.disabled=true;
+    setAirtelName.value=a?.recipientName||'';setAirtelNumber.value=a?.phoneNumber||'';setAirtelInst.value='Stored fields: recipientName + phoneNumber (instructions are not in exact schema).';setAirtelInst.disabled=true;
+    setGroupUrl.value=s?.groupLink||'';
+  }
+  async function savePlatformSettings(){
+    try{
+      const items=[['mtn',setMtnName.value.trim(),setMtnNumber.value.trim()],['airtel',setAirtelName.value.trim(),setAirtelNumber.value.trim()]];
+      for(const [network,name,phone] of items){let r=state.recipients.find(x=>String(x.network).toLowerCase()===network);const d={network,recipientName:name,phoneNumber:phone,isActive:true,sortOrder:network==='mtn'?1:2};if(r)await updateRow(T.recipients,r.$id,d);else await createRow(T.recipients,d);}
+      let s=state.settings.find(x=>x.settingKey==='platform');const d={settingKey:'platform',currency:s?.currency||'UGX',minimumProductPrice:Number(s?.minimumProductPrice||0),minimumWithdraw:Number(s?.minimumWithdraw||10000),withdrawTaxBps:Number(s?.withdrawTaxBps||500),referralCommissionBps:Number(s?.referralCommissionBps||2000),investmentDurationDays:Number(s?.investmentDurationDays||25),minimumPasswordLength:Number(s?.minimumPasswordLength||6),groupLink:setGroupUrl.value.trim(),updatedBy:ADMIN_AUTH_ID};
+      if(s)await updateRow(T.settings,s.$id,d);else await createRow(T.settings,d);
+      await audit('PLATFORM_SETTINGS_UPDATE',T.settings,s?.$id||'',s||{},d,'Updated payment recipients and community link');showToast('Platform settings saved to Appwrite.');await syncAll();
+    }catch(e){/* technical details remain in the Errors report */}
+  }
+
+  function renderAuditView(){
+    const rows=[...state.audit].sort((a,b)=>String(b.$createdAt||'').localeCompare(String(a.$createdAt||'')));
+    auditTableBody.innerHTML=rows.map(x=>`<tr><td class="py-3 px-4">${esc(x.$createdAt)}</td><td class="py-3 px-4">${esc(x.action)}</td><td class="py-3 px-4 font-mono">${esc(x.targetTable)} / ${esc(x.targetRowId)}</td><td class="py-3 px-4">${esc(x.adminUserId)}</td><td class="py-3 px-4">${esc(x.reason)}</td></tr>`).join('')||'<tr><td colspan="5" class="p-8 text-center text-stone-400">No audit records.</td></tr>';
+  }
+
+  async function createWallet(userId){const r=await createRow(T.wallets,{userId,rechargeBalance:0,withdrawableBalance:0,totalRecharged:0,totalPurchased:0,totalMaturityReturns:0,totalReferralCommisions:0,totalWithdrawn:0});return rowData(r)}
+  async function notify(userId,title,message,amount,referenceType,referenceId){
+    try{
+      // The current Notifications schema requires readAt even for unread rows.
+      // isRead remains false; readAt is only populated to satisfy the required attribute.
+      return await createRow(T.notifications,{userId,title,message,type:'admin',amount:Number(amount||0),referenceType,referenceId,isRead:false,readAt:now(),metadataJson:JSON.stringify({adminUserId:ADMIN_AUTH_ID}),createdAt:now()});
+    }catch(e){
+      // Notification failure must never make an already-completed financial action
+      // appear to have failed. The underlying technical error is still captured.
+      // Keep the technical failure in the Errors report; the primary action result remains unchanged.
+      return null;
+    }
+  }
+  async function audit(action,targetTable,targetRowId,before,after,reason){
+    try{
+      return await createRow(T.audit,{adminUserId:ADMIN_AUTH_ID,action,targetTable,targetRowId:targetRowId||'',beforeJson:JSON.stringify(before||{}),afterJson:JSON.stringify(after||{}),reason:String(reason||'')});
+    }catch(e){
+      // Keep the technical failure in the Errors report; do not expose it in the interface.
+      return null;
+    }
+  }
+
+  function renderAll(){renderDashboardView();renderDepositsView();renderWithdrawalsView();renderCustomersView();renderLedgerView();renderSettingsView();renderAuditView();if(window.lucide)lucide.createIcons()}
+
+  function openErrorReport(){
+    const txt=errors.length?`CIRCOLA ADMIN TECHNICAL ERROR REPORT\nGenerated: ${now()}\nErrors captured: ${errors.length}\n\n`+errors.map((e,i)=>`#${i+1} ${e.time}\nWHERE: ${e.where}\nHTTP: ${e.http}\nMESSAGE: ${e.message}\nDATA: ${typeof e.data==='string'?e.data:JSON.stringify(e.data)}\n\n--------------------------------`).join('\n'):'CIRCOLA ADMIN TECHNICAL ERROR REPORT\nNo errors captured.';
+    errorReportMeta.textContent=`Generated ${now()} · ${errors.length} captured`;errorReportText.textContent=txt;errorReportModal.classList.remove('hidden');
+  }
+  function closeErrorReport(){errorReportModal.classList.add('hidden')}
+  async function copyErrorReport(){await navigator.clipboard.writeText(errorReportText.textContent);showToast('Technical error report copied.')}
+  function clearErrors(){errors=[];errorCountBadge.textContent='0';openErrorReport()}
+
+  function downloadSelfHtml(){const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';a.click();}
+
+  async function boot(){
+    try{
+      await requireAdmin();adminLoginOverlay.classList.add('hidden');await syncAll();switchTab('dashboard');
+    }catch(e){
+      adminLoginOverlay.classList.remove('hidden');
+      if(e.status!==401&&e.status!==403)document.getElementById('adminLoginStatus').textContent='Administrator session required. Sign in below.';
+    }
+  }
+  document.addEventListener('DOMContentLoaded',()=>{if(window.lucide)lucide.createIcons();applyTheme(document.body.classList.contains('light-theme')?'light':'dark');boot()});
+  setInterval(()=>{if(state.admin)syncAll().catch(()=>{});},30000);
+  </script>
+
+</body>
+</html>
